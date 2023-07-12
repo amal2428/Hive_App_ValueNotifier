@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:hive_valuenotifier/db_functions.dart';
 
 class HomePage extends StatelessWidget {
   final TextEditingController userTextController = TextEditingController();
@@ -43,8 +46,15 @@ class HomePage extends StatelessWidget {
               height: 50,
             ),
             ElevatedButton.icon(
-              onPressed: () {
-                textNotifier.value = userTextController.text;
+              onPressed: () async {
+                try {
+                  textNotifier.value = userTextController.text;
+                  int key = await HiveFunctions.create(
+                      value: userTextController.text);
+                  textNotifier.value = key.toString();
+                } catch (e) {
+                  log("Create error: $e");
+                }
               },
               icon: const Icon(Icons.create_outlined),
               label: const Text("Create"),
@@ -53,7 +63,16 @@ class HomePage extends StatelessWidget {
               height: 20,
             ),
             ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () async {
+                try {
+                  int key = int.parse(userTextController.text);
+                  String data = await HiveFunctions.read(key: key);
+                  textNotifier.value = data;
+                  log("Read success: $data");
+                } catch (e) {
+                  log("Read error: $e");
+                }
+              },
               icon: const Icon(Icons.read_more),
               label: const Text("Read"),
             ),
@@ -61,8 +80,15 @@ class HomePage extends StatelessWidget {
               height: 20,
             ),
             ElevatedButton.icon(
-              onPressed: () {
-                textNotifier.value = userTextController.text;
+              onPressed: () async {
+                try {
+                  int key = int.parse(userTextController.text);
+                  String data = await HiveFunctions.read(key: key);
+                  textNotifier.value = data;
+                  log("Read success: $data");
+                } catch (e) {
+                  log("Read error: $e");
+                }
               },
               icon: const Icon(Icons.update),
               label: const Text("Update"),
@@ -71,7 +97,16 @@ class HomePage extends StatelessWidget {
               height: 20,
             ),
             ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () async {
+                try {
+                  int key = int.parse(userTextController.text);
+                  await HiveFunctions.delete(key: key);
+                  textNotifier.value = "Delete success";
+                  log("Delete success");
+                } catch (e) {
+                  log("Delete error: $e");
+                }
+              },
               icon: const Icon(Icons.delete_forever),
               label: const Text("Delete"),
             )
