@@ -13,7 +13,7 @@ class HiveFunctions {
     return data;
   }
 
-static  Future<int> update({required int key, required String value}) async {
+static  Future<dynamic> update({required int key, required String value}) async {
     final box = await Hive.openBox("dbBox");
     await box.put(key, value);
     return key;
